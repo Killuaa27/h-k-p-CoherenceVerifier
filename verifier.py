@@ -9,19 +9,18 @@ random.seed(42)
 
 class Row:
 
-    def __init__(self, id, row, public_items):
+    def __init__(self, id, row_pub, row_priv, public_items, private_items):
         self.id = id
         self.private = list() # private items
         self.public = list() # public items
-        for item in row:
-            try:
-                item = int(item)
-            except ValueError:
-                continue
-            if item in public_items:
-                self.public.append(item)
-            else:
-                self.private.append(item)
+        for item in row_pub:
+            item = int(item)
+            self.public.append(item)
+            public_items.add(item)
+        for item in row_priv:
+            item = int(item)
+            self.private.append(item)
+            private_items.add(item)
 
     def delete_item(self, item):
         """Rimuove l'elemento passato dalla riga"""
@@ -36,10 +35,10 @@ class Row:
 
 class Table:
 
-    def __init__(self, filename, n_items, delta, p, h, k):
+    def __init__(self, pub, priv, p, h, k):
         """
-        n_items - numero di item nell'universo del database
-        delta - percentuale di attributi pubblici
+        pub - dataset with public items
+        priv - dateset with private items
         p - numero massimo attributi conosciuti
         h - max probabilità che una transazione contenga 1 dato privato
         k - numero min di transazioni per ogni sottoinsieme di attributi pubblici conosciuti
@@ -47,17 +46,20 @@ class Table:
         self.p = p
         self.h = h
         self.k = k
-        self.U = range(1, n_items + 1) # lista di tutti gli items (Universo)
-        self.public_items = [1,2,3] # TODO: prendere i pubblici
-        self.private_items = [4,5,6] # TODO: prendere i privati
+        public_items = set()
+        private_items = set()
         self.rows = list()
-        with open(filename, "r") as dataset:
-            csv_reader = csv.reader(dataset, delimiter=' ')
-            id = 0
-            for row in csv_reader:
-                id += 1
-                self.rows.append(Row(id, row, self.public_items))
+        with open(pub, "r") as dataset_pub:
+            csv_pub = csv.reader(dataset_pub, delimiter=' ')            
+            with open(priv, "r") as dateset_priv:
+                csv_priv = csv.reader(dataset_priv, delimiter=' ')
+                id = 0
+                for row_pub, row_priv in zip(csv_pub, csv_priv):
+                    id += 1
+                    self.rows.append(Row(id, row_pub, row_priv, public_items, private_items))
         self.number_of_rows = id
+        self.public_items = list(public_items)
+        self.private_items = list(private_items)
         
     def is_mole(self, beta):
         """
@@ -90,11 +92,9 @@ class Table:
         temp_beta.append(private_item)
         return self.Sup(temp_beta) / k
 
-def main(**params):
-    dataset = Table(**params)
+def main(args):
+    dataset = Table(args.pub, args.priv, args.p, args.h, args.k)
         
-    """brain storming"""
-
     C1 = dataset.public_items
     M1 = list()
     F1 = list() # non moli
@@ -123,14 +123,16 @@ def main(**params):
         print("Il dataset è anonimzizato secondo i parametri:\n-) h: ", dataset.h, "\n-) k: ", dataset.k, "\n-) p: ", dataset.p)
 
 
-
 if __name__ == "__main__":
-    params = {
-        'filename':'anonymized_dataset.dat',
-        'n_items':129,
-        'delta':0.5,
-        'p':3,
-        'h':0.4,
-        'k':4
-    }
-    main(**params)
+    import argparse
+
+    parser = argparse.ArgumentParser(description='h-k-p-CoherenceVerifier')
+    parser.add_argument('-pub', type=str, required=True, help='dataset with public items', metavar='filepath')
+    parser.add_argument('-priv', type=str, required=True, help='dataset with private items', metavar='filepath')
+    parser.add_argument('-p', type=int, required=True, help='', metavar='integer')
+    parser.add_argument('-h', type=float, required=True, help='', metavar='percentage')
+    parser.add_argument('-k', type=int, required=True, help='', metavar='integer')
+    
+    args = parser.parse_args()
+    
+    main(args)
