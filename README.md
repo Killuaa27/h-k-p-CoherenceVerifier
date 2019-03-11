@@ -17,7 +17,7 @@ Launch the script with two parameters:
 * priv _filepath_ - the dataset with private items
 * p - items known by attacker
 * k - Minumun number of transactions
-- h - Probability to deanonimize some item
+* h - Probability to deanonimize some item
 
 Example
 
