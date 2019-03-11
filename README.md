@@ -22,7 +22,7 @@ Launch the script with two parameters:
 Example
 
 ```
-python3 verifier.py -pub dataset_pub.dat -priv dataset_priv.csv -p 4 -k 3 -p 0.8
+python3 verifier.py -pub dataset_pub.dat -priv dataset_priv.dat -p 4 -k 3 -p 0.8
 ```
 
 The result will be print to console.
