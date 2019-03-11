@@ -15,11 +15,14 @@ The script take two dataset as input. One dataset with only public items and one
 Launch the script with two parameters:
 * pub _filepath_ - the dataset with public items
 * priv _filepath_ - the dataset with private items
+* p - items known by attacker
+* k - Minumun number of transactions
+- h - Probability to deanonimize some item
 
 Example
 
 ```
-python3 verifier.py -pub dataset_pub.csv -priv dataset_priv.csv
+python3 verifier.py -pub dataset_pub.csv -priv dataset_priv.csv -p 4 -k 3 -p 0.8
 ```
 
 The result will be print to console.
