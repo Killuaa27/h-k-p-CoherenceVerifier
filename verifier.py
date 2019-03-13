@@ -51,7 +51,7 @@ class Table:
         self.rows = list()
         with open(pub, "r") as dataset_pub:
             csv_pub = csv.reader(dataset_pub, delimiter=' ')            
-            with open(priv, "r") as dateset_priv:
+            with open(priv, "r") as dataset_priv:
                 csv_priv = csv.reader(dataset_priv, delimiter=' ')
                 id = 0
                 for row_pub, row_priv in zip(csv_pub, csv_priv):
@@ -92,8 +92,28 @@ class Table:
         temp_beta.append(private_item)
         return self.Sup(temp_beta) / k
 
+
+def diff_list(L1, L2):
+    return len(set(L1).symmetric_difference(set(L2)))
+
+def get_C(F, M):
+    C = list()
+    for i in range(len(F)):
+        for j in range(i + 1, len(F)):
+            if diff_list(F[i], F[j]) == 2:
+                new_F = list(F[i])
+                new_F.extend(x for x in F[j] if x not in new_F)
+                flag = False
+                for m in M:
+                    if set(new_F).issuperset(m):
+                        flag = True
+                        break
+                if not flag:
+                    C.append(new_F)
+    return C
+
 def main(args):
-    dataset = Table(args.pub, args.priv, args.p, args.h, args.k)
+    dataset = Table(args.pub, args.priv, args.p, args.ha, args.k)
         
     C1 = dataset.public_items
     M1 = list()
@@ -122,6 +142,19 @@ def main(args):
     if anonymized:
         print("Il dataset è anonimzizato secondo i parametri:\n-) h: ", dataset.h, "\n-) k: ", dataset.k, "\n-) p: ", dataset.p)
 
+def foo(dataset, F, M):
+    """Return (Fi+1, Mi+1)
+    """
+    M1 = list()
+    F1 = list()
+    C1 = get_C(F, M)
+    for e in C1:
+        if dataset.is_mole(e):
+            M1.append(e)
+        else:
+            F1.append(e)
+    return F1, M1
+
 
 if __name__ == "__main__":
     import argparse
@@ -130,7 +163,7 @@ if __name__ == "__main__":
     parser.add_argument('-pub', type=str, required=True, help='dataset with public items', metavar='filepath')
     parser.add_argument('-priv', type=str, required=True, help='dataset with private items', metavar='filepath')
     parser.add_argument('-p', type=int, required=True, help='', metavar='integer')
-    parser.add_argument('-h', type=float, required=True, help='', metavar='percentage')
+    parser.add_argument('-ha', type=float, required=True, help='', metavar='percentage')
     parser.add_argument('-k', type=int, required=True, help='', metavar='integer')
     
     args = parser.parse_args()
