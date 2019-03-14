@@ -1,6 +1,6 @@
 # h-k-p-CoherenceVerifier 
 
-Python script to verify h-k-p Coherence.
+Python script to verify h-k-p Coherence for Data protection and privacy exam
 
 ## Usage
 
