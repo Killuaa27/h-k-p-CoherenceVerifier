@@ -33,7 +33,7 @@ The result will be print to console.
 
 ## Authors
 
-* **Luigi Sciolla** - [github](https://github.com/Killuaa27)
+* **Lu** - [github](https://github.com/Killuaa27)
 * **Eugenio Polleri** - [github](https://github.com/eugep)
 
 ## License
